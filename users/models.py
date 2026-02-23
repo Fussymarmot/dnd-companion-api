@@ -44,8 +44,8 @@ class UserProfile(models.Model):
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
         img = Image.open(self.image.path)
-        max_size = (200, 200)
-        if img.height > 300 or img.width > 300:
+        max_size = (500, 500)
+        if img.height > 500 or img.width > 500:
             img.thumbnail(max_size)
             img.save(self.image.path)
 
