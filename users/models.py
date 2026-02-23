@@ -1,9 +1,7 @@
-from tkinter import Image
-
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
-from PIL import Image
 import uuid
+from utils.image import image_resize
 
 # Create your models here.
 class UserManager(BaseUserManager):
@@ -43,11 +41,8 @@ class UserProfile(models.Model):
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
-        img = Image.open(self.image.path)
-        max_size = (500, 500)
-        if img.height > 500 or img.width > 500:
-            img.thumbnail(max_size)
-            img.save(self.image.path)
+        image_resize(self.image.path)
+
 
     def __str__(self):
         return  f"Profile for {self.user.username}"
