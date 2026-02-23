@@ -1,5 +1,8 @@
+from tkinter import Image
+
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
+from PIL import Image
 
 # Create your models here.
 class UserManager(BaseUserManager):
@@ -27,3 +30,21 @@ class User(AbstractUser):
     REQUIRED_FIELDS = ['username']
     objects = UserManager()
 
+    def __str__(self):
+        return self.email
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    image = models.ImageField(default='default.jpg', upload_to='profile_pics')
+    bio = models.TextField()
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        img = Image.open(self.image.path)
+        max_size = (200, 200)
+        if img.height > 300 or img.width > 300:
+            img.thumbnail(max_size)
+            img.save(self.image.path)
+
+    def __str__(self):
+        return  f"Profile for {self.user.username}"
