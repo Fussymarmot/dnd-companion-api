@@ -3,6 +3,7 @@ from tkinter import Image
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from PIL import Image
+import uuid
 
 # Create your models here.
 class UserManager(BaseUserManager):
@@ -25,6 +26,7 @@ class UserManager(BaseUserManager):
         return self.create_user(email, username, password, **extra_fields)
 
 class User(AbstractUser):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     email = models.EmailField(unique=True)
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
@@ -34,6 +36,7 @@ class User(AbstractUser):
         return self.email
 
 class UserProfile(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     image = models.ImageField(default='default.jpg', upload_to='profile_pics')
     bio = models.TextField()
