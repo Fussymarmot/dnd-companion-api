@@ -33,6 +33,10 @@ class Characters(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    class Meta:
+        verbose_name = 'character'
+        verbose_name_plural = 'characters'
+        db_table = 'characters'
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)

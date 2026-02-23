@@ -30,6 +30,11 @@ class User(AbstractUser):
     REQUIRED_FIELDS = ['username']
     objects = UserManager()
 
+    class Meta:
+        verbose_name = 'user'
+        verbose_name_plural = 'users'
+        db_table = 'users'
+
     def __str__(self):
         return self.email
 
@@ -43,6 +48,10 @@ class UserProfile(models.Model):
         super().save(*args, **kwargs)
         image_resize(self.image.path)
 
+    class Meta:
+        verbose_name = 'profile'
+        verbose_name_plural = 'profiles'
+        db_table = 'profiles_users'
 
     def __str__(self):
         return  f"Profile for {self.user.username}"

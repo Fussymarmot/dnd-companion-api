@@ -1,4 +1,5 @@
 from django.db import models
+from utils.image import image_resize
 
 # Create your models here.
 class Races(models.Model):
@@ -9,6 +10,13 @@ class Races(models.Model):
     #sorting
     class Meta:
         ordering = ['name']
+        verbose_name = 'race'
+        verbose_name_plural = 'races'
+        db_table = 'races'
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        image_resize(self.image.path)
 
     def __str__(self):
         return self.name
@@ -19,6 +27,9 @@ class Spells(models.Model):
     description = models.TextField()
     class Meta:
         ordering = ['level','name']
+        verbose_name = 'spell'
+        verbose_name_plural = 'spells'
+        db_table = 'spells'
 
     def __str__(self):
         return f"level {self.level} - {self.name}"
@@ -31,6 +42,14 @@ class Monsters(models.Model):
     description = models.TextField()
     class Meta:
         ordering = ['name']
+        verbose_name = 'monster'
+        verbose_name_plural = 'monsters'
+        db_table = 'monsters'
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        image_resize(self.image.path)
+
     def __str__(self):
         return self.name
 
@@ -38,3 +57,11 @@ class CharactersClass(models.Model):
     name = models.CharField(max_length=300)
     spells = models.ManyToManyField(Spells)
     description = models.TextField()
+    class Meta:
+        ordering = ['name']
+        verbose_name = 'character class'
+        verbose_name_plural = 'characters classes'
+        db_table = 'characters_classes'
+
+    def __str__(self):
+        return self.name
