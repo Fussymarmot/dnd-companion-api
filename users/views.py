@@ -13,7 +13,7 @@ User = get_user_model()
 
 class AuthViewSet(viewsets.ViewSet):
     permission_classes = [permissions.AllowAny]
-
+    #регистрация
     @action(detail=False, methods=['post'], url_name='register')
     def register(self, request):
         serializer = RegisterSerializer(data=request.data)
@@ -29,7 +29,7 @@ class AuthViewSet(viewsets.ViewSet):
             "refresh": str(refresh),
             "access": str(refresh.access_token),
         })
-
+    #вход
     @action(detail=False, methods=['post'], url_name='login')
     def login(self, request):
         email = request.data.get('email')
@@ -51,12 +51,12 @@ class AuthViewSet(viewsets.ViewSet):
 
 class AccountViewSet(viewsets.ViewSet):
     permission_classes = [permissions.IsAuthenticated]
-
+    #свой профиль
     @action(detail=False, methods=['get'], url_name='me')
     def me(self, request):
         serializer = UserPrivateSerializer(request.user, context={'request': request})
         return Response(serializer.data)
-
+    #смена пароля
     @action(detail=False, methods=['post'], url_name='change_password')
     def change_password(self, request):
         user = request.user
@@ -76,7 +76,7 @@ class AccountViewSet(viewsets.ViewSet):
         user.set_password(new_password)
         user.save()
         return Response({"detail": "Password changed successfully."})
-
+    #смена ника
     @action(detail=False, methods=['post'], url_name='change_username')
     def change_username(self, request):
         user = request.user
@@ -85,7 +85,7 @@ class AccountViewSet(viewsets.ViewSet):
         user.save()
         return Response({"detail": "Username changed successfully."})
 
-
+#профиль пользователя по нику
 class UserProfileRetrieve(generics.RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer

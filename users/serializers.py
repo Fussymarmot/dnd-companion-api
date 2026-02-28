@@ -4,6 +4,7 @@ from django.contrib.auth.password_validation import validate_password
 from .models import UserProfile
 
 User = get_user_model()
+#сериализация регистрации
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
     password2 = serializers.CharField(write_only=True, required=True)
@@ -26,6 +27,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         user.save()
         return user
 
+#сериализатор публичных профилей
 class UserSerializer(serializers.ModelSerializer):
     bio = serializers.CharField(source="profile.bio", read_only=True)
     image = serializers.ImageField(source="profile.image", read_only=True)
@@ -34,6 +36,7 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ("id", "username", "bio", "image")
 
+#сериализатор своего профиля
 class UserPrivateSerializer(serializers.ModelSerializer):
     bio = serializers.CharField(source="profile.bio", read_only=True)
     image = serializers.ImageField(source="profile.image", read_only=True)
