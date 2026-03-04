@@ -4,19 +4,20 @@ from rest_framework.response import Response
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth.password_validation import validate_password
-from .serializers import UserSerializer, UserPrivateSerializer, RegisterSerializer
+from .serializers import UserSerializer, UserPrivateSerializer, RegisterSerializer, LoginSerializer, AccountUpdateSerializer
 from django.contrib.auth import get_user_model
 
 
 # Create your views here.
 User = get_user_model()
 
-class AuthViewSet(viewsets.ViewSet):
+class AuthViewSet(viewsets.GenericViewSet):
     permission_classes = [permissions.AllowAny]
-    #регистрация
-    @action(detail=False, methods=['post'], url_name='register')
+
+    # регистрация
+    @action(detail=False, methods=['post'], url_name='register', serializer_class=RegisterSerializer)
     def register(self, request):
-        serializer = RegisterSerializer(data=request.data)
+        serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
         refresh = RefreshToken.for_user(user)
@@ -29,12 +30,17 @@ class AuthViewSet(viewsets.ViewSet):
             "refresh": str(refresh),
             "access": str(refresh.access_token),
         })
-    #вход
-    @action(detail=False, methods=['post'], url_name='login')
+
+    # вход
+    @action(detail=False, methods=['post'], url_name='login', serializer_class=LoginSerializer)
     def login(self, request):
-        email = request.data.get('email')
-        password = request.data.get('password')
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        email = serializer.validated_data['email']
+        password = serializer.validated_data['password']
         user = authenticate(request, username=email, password=password)
+
         if not user:
             return Response({"detail": "Incorrect email or password."}, status=status.HTTP_401_UNAUTHORIZED)
 
@@ -49,41 +55,24 @@ class AuthViewSet(viewsets.ViewSet):
             "access": str(refresh.access_token),
         })
 
-class AccountViewSet(viewsets.ViewSet):
+class AccountViewSet(viewsets.GenericViewSet):
     permission_classes = [permissions.IsAuthenticated]
-    #свой профиль
+    #приватный пользователь
     @action(detail=False, methods=['get'], url_name='me')
     def me(self, request):
         serializer = UserPrivateSerializer(request.user, context={'request': request})
         return Response(serializer.data)
-    #смена пароля
-    @action(detail=False, methods=['post'], url_name='change_password')
-    def change_password(self, request):
-        user = request.user
-        old_password = request.data.get('old_password')
-        new_password = request.data.get('new_password')
 
-        if not user.check_password(old_password):
-            return Response({"old_password": "Old password is incorrect."},
-                            status=status.HTTP_400_BAD_REQUEST)
-
-        try:
-            validate_password(new_password, user)
-        except Exception as e:
-            return Response({"new_password": list(e.messages)},
-                            status=status.HTTP_400_BAD_REQUEST)
-
-        user.set_password(new_password)
-        user.save()
-        return Response({"detail": "Password changed successfully."})
-    #смена ника
-    @action(detail=False, methods=['post'], url_name='change_username')
-    def change_username(self, request):
-        user = request.user
-        username = request.data.get('username')
-        user.username = username
-        user.save()
-        return Response({"detail": "Username changed successfully."})
+    #обновление инфы об аккаунте
+    @action(detail=False, methods=['patch'], url_name='update_account', serializer_class=AccountUpdateSerializer)
+    def update_account(self, request):
+        serializer = self.get_serializer(request.user, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response({
+            "detail": "Account updated successfully.",
+            "user": serializer.data
+        }, status=status.HTTP_200_OK)
 
 #профиль пользователя по нику
 class UserProfileRetrieve(generics.RetrieveAPIView):
@@ -91,3 +80,4 @@ class UserProfileRetrieve(generics.RetrieveAPIView):
     serializer_class = UserSerializer
     permission_classes = [permissions.AllowAny]
     lookup_field = "username"
+
