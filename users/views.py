@@ -3,8 +3,12 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
-from django.contrib.auth.password_validation import validate_password
-from .serializers import UserSerializer, UserPrivateSerializer, RegisterSerializer, LoginSerializer, AccountUpdateSerializer
+from .serializers import(
+    UserSerializer,
+    UserPrivateSerializer,
+    RegisterSerializer,
+    LoginSerializer,
+    AccountUpdateSerializer)
 from django.contrib.auth import get_user_model
 
 
