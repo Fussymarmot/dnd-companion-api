@@ -80,8 +80,8 @@ class AccountViewSet(viewsets.GenericViewSet):
 
 #профиль пользователя по нику
 class UserProfileRetrieve(generics.RetrieveAPIView):
+    permission_classes = [permissions.AllowAny]
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [permissions.AllowAny]
     lookup_field = "username"
 

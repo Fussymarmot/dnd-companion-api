@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
+from characters.serializers import CharactersListSerializer
 
 User = get_user_model()
 #сериализация регистрации
@@ -103,7 +104,12 @@ class AccountUpdateSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     bio = serializers.CharField(source="profile.bio", read_only=True)
     image = serializers.ImageField(source="profile.image", read_only=True)
+    characters = serializers.SerializerMethodField()
 
     class Meta:
         model = User
-        fields = ("id", "username", "bio", "image")
+        fields = ("id", "username", "bio", "image", "characters")
+
+    def get_characters(self, obj):
+        chars = obj.characters.all()
+        return CharactersListSerializer(chars, many=True).data
