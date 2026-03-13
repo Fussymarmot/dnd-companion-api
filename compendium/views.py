@@ -2,11 +2,11 @@ from rest_framework import viewsets, permissions
 from .models import Races, Spells, Monsters, CharactersClass
 from .serializers import (
     RaceListSerializer,
-    RacesSerializer,
+    RacesDetailSerializer,
     SpellsListSerializer,
-    SpellsSerializer,
+    SpellsDetailSerializer,
     MonstersListSerializer,
-    MonstersSerializer, CharactersClassListSerializer, CharactersClassSerializer
+    MonstersDetailSerializer, CharactersClassListSerializer, CharactersClassDetailSerializer
 )
 
 # Create your views here.
@@ -16,7 +16,7 @@ class RacesViewSet(viewsets.ReadOnlyModelViewSet):
     def get_serializer_class(self):
         if self.action == 'list':
             return RaceListSerializer
-        return RacesSerializer
+        return RacesDetailSerializer
 
 class SpellsViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [permissions.AllowAny]
@@ -24,7 +24,7 @@ class SpellsViewSet(viewsets.ReadOnlyModelViewSet):
     def get_serializer_class(self):
         if self.action == 'list':
             return SpellsListSerializer
-        return SpellsSerializer
+        return SpellsDetailSerializer
 
 class MonstersViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [permissions.AllowAny]
@@ -32,7 +32,7 @@ class MonstersViewSet(viewsets.ReadOnlyModelViewSet):
     def get_serializer_class(self):
         if self.action == 'list':
             return MonstersListSerializer
-        return MonstersSerializer
+        return MonstersDetailSerializer
 
 class CharactersClassViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [permissions.AllowAny]
@@ -40,4 +40,4 @@ class CharactersClassViewSet(viewsets.ReadOnlyModelViewSet):
     def get_serializer_class(self):
         if self.action == 'list':
             return CharactersClassListSerializer
-        return CharactersClassSerializer
+        return CharactersClassDetailSerializer

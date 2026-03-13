@@ -7,7 +7,7 @@ class RaceListSerializer(serializers.ModelSerializer):
         model = Races
         fields = ('id', 'name')
 
-class RacesSerializer(serializers.ModelSerializer):
+class RacesDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Races
         fields = '__all__'
@@ -17,7 +17,7 @@ class SpellsListSerializer(serializers.ModelSerializer):
         model = Spells
         fields = ('id', 'name', 'level')
 
-class SpellsSerializer(serializers.ModelSerializer):
+class SpellsDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Spells
         fields = '__all__'
@@ -27,7 +27,7 @@ class MonstersListSerializer(serializers.ModelSerializer):
         model = Monsters
         fields = ('id', 'name')
 
-class MonstersSerializer(serializers.ModelSerializer):
+class MonstersDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Monsters
         fields = '__all__'
@@ -37,7 +37,7 @@ class CharactersClassListSerializer(serializers.ModelSerializer):
         model = CharactersClass
         fields = ('id', 'name')
 
-class CharactersClassSerializer(serializers.ModelSerializer):
+class CharactersClassDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = CharactersClass
         fields = '__all__'
